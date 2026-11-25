@@ -132,6 +132,26 @@
                 <artifactId>versions-maven-plugin</artifactId>
                 <version>2.17.1</version>
             </plugin>
+            <!-- analisis del codigo con spotbugs y las reglas de seguridad de findsecbugs. no se engancha
+                 al build: se corre a mano con .\mvnw.cmd compile spotbugs:check y se ve con .\mvnw.cmd spotbugs:gui
+                 (la 4.8 no sirve con java 25, la 4.9.8.2 si) -->
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.9.8.2</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Low</threshold>
+                    <xmlOutput>true</xmlOutput>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.h3xstream.findsecbugs</groupId>
+                            <artifactId>findsecbugs-plugin</artifactId>
+                            <version>1.13.0</version>
+                        </plugin>
+                    </plugins>
+                </configuration>
+            </plugin>
             <!-- no se engancha al build: se corre a mano con .\mvnw.cmd dependency-check:check
                  porque la primera vez descarga la base de vulnerabilidades y tarda muchisimo -->
             <plugin>
