@@ -6,6 +6,7 @@ import java.security.Principal;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
@@ -102,6 +103,8 @@ public class SecurityConfig {
                         // estas rutas solo existen con kolab.desarrollo=true; fuera de eso dan 404
                         .requestMatchers("/desarrollo/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
+                        // un error de javascript puede pasar antes de iniciar sesion; igual pide el token csrf
+                        .requestMatchers(HttpMethod.POST, "/errores-cliente").permitAll()
                         .anyRequest().hasRole("USUARIO"))
                 // quien administra vuelve a su panel; el resto, como un formulario sin token, es un 403
                 .exceptionHandling(errores -> errores

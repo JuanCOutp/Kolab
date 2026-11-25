@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: base(~{::title}, ~{::main})}">
+<head>
+    <title>Monitoreo · KOLAB</title>
+</head>
+<body>
+
+<main class="k-total" th:with="a=${monitoreo.aplicacion}, b=${monitoreo.baseDeDatos}, s=${monitoreo.sistema}">
+    <div class="k-titulo-fila k-panel-cima">
+        <h1>Monitoreo</h1>
+        <a class="k-btn" th:href="@{/admin/monitoreo}"><i class="bi bi-arrow-clockwise"></i> Actualizar</a>
+    </div>
+    <p class="k-texto-suave">Lectura del <span th:text="${monitoreo.hora}">24/11/2026 20:15:03</span>.</p>
+
+    <div class="k-monitoreo">
+        <!-- apm: lo que mide spring boot de cada peticion -->
+        <section class="k-tarjeta" id="bloque-aplicacion">
+            <h2 class="k-tarjeta-titulo">Aplicación</h2>
+            <dl class="k-datos">
+                <dt>Peticiones atendidas</dt>
+                <dd th:text="${a.peticiones}">1520</dd>
+                <dt>Tiempo medio de respuesta</dt>
+                <dd th:text="${a.tiempoMedioMs} + ' ms'">35 ms</dd>
+                <dt>Tiempo máximo</dt>
+                <dd th:text="${a.tiempoMaximoMs} + ' ms'">410 ms</dd>
+                <dt>Respuestas 2xx / 4xx / 5xx</dt>
+                <dd th:text="${a.respuestas2xx} + ' / ' + ${a.respuestas4xx} + ' / ' + ${a.respuestas5xx}">1400 / 110 / 0</dd>
+                <dt>Errores del servidor</dt>
+                <dd th:text="${a.erroresBackend}">0</dd>
+                <dt>Errores del navegador</dt>
+                <dd th:text="${a.erroresFrontend}">0</dd>
+                <dt>Encendida hace</dt>
+                <dd th:text="${a.encendido}">2 h 13 min</dd>
+            </dl>
+            <div class="k-barras k-mt-15">
+                <div class="k-barras-fila">
+                    <span class="k-barras-rotulo">Memoria de Java</span>
+                    <span class="k-barras-pista"><span class="k-barras-valor" th:data-ancho="${a.porcentajeMemoria}"></span></span>
+                    <span th:text="${a.memoriaUsadaMb} + ' / ' + ${a.memoriaMaximaMb} + ' MB'">120 / 256 MB</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="k-tarjeta" id="bloque-base">
+            <h2 class="k-tarjeta-titulo">Base de datos</h2>
+            <dl class="k-datos">
+                <dt>Estado</dt>
+                <dd th:text="${b.estado}">UP</dd>
+                <dt>Conexiones inactivas</dt>
+                <dd th:text="${b.conexionesInactivas}">9</dd>
+                <dt>Tamaño de la base</dt>
+                <dd th:text="${b.tamano}">12 MB</dd>
+            </dl>
+            <div class="k-barras k-mt-15">
+                <div class="k-barras-fila">
+                    <span class="k-barras-rotulo">Conexiones en uso</span>
+                    <span class="k-barras-pista"><span class="k-barras-valor" th:data-ancho="${b.porcentajeConexiones}"></span></span>
+                    <span th:text="${b.conexionesActivas} + ' / ' + ${b.conexionesMaximas}">1 / 10</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="k-tarjeta" id="bloque-sistema">
+            <h2 class="k-tarjeta-titulo">Servidor</h2>
+            <div class="k-barras">
+                <div class="k-barras-fila">
+                    <span class="k-barras-rotulo">CPU del servidor</span>
+                    <span class="k-barras-pista"><span class="k-barras-valor" th:data-ancho="${s.cpuSistema}"></span></span>
+                    <span th:text="${s.cpuSistema} + ' %'">12 %</span>
+                </div>
+                <div class="k-barras-fila">
+                    <span class="k-barras-rotulo">CPU de KOLAB</span>
+                    <span class="k-barras-pista"><span class="k-barras-valor" th:data-ancho="${s.cpuProceso}"></span></span>
+                    <span th:text="${s.cpuProceso} + ' %'">3 %</span>
+                </div>
+                <div class="k-barras-fila">
+                    <span class="k-barras-rotulo">Memoria en uso</span>
+                    <span class="k-barras-pista"><span class="k-barras-valor" th:data-ancho="${s.porcentajeMemoria}"></span></span>
+                    <span th:text="${s.memoriaTotalMb - s.memoriaLibreMb} + ' / ' + ${s.memoriaTotalMb} + ' MB'">700 / 1024 MB</span>
+                </div>
+                <div class="k-barras-fila">
+                    <span class="k-barras-rotulo">Disco en uso</span>
+                    <span class="k-barras-pista"><span class="k-barras-valor" th:data-ancho="${s.porcentajeDisco}"></span></span>
+                    <span th:text="${s.discoTotalGb - s.discoLibreGb} + ' / ' + ${s.discoTotalGb} + ' GB'">8 / 30 GB</span>
+                </div>
+            </div>
+            <dl class="k-datos k-mt-15">
+                <dt>Red</dt>
+                <dd th:text="${s.red}">recibidos 120 MB · enviados 80 MB</dd>
+            </dl>
+        </section>
+    </div>
+
+    <script th:src="@{/js/medidas.js}" defer></script>
+</main>
+
+</body>
+</html>

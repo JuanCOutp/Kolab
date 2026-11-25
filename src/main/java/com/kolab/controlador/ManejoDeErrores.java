@@ -3,10 +3,21 @@ package com.kolab.controlador;
 import com.kolab.seguridad.BitacoraDeSeguridad;
 import com.kolab.servicio.excepcion.OperacionNoPermitidaException;
 import com.kolab.servicio.excepcion.RecursoNoEncontradoException;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.TypeMismatchException;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindException;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -16,10 +27,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @ControllerAdvice
 public class ManejoDeErrores {
 
-    private final BitacoraDeSeguridad bitacora;
+    private static final Logger log = LoggerFactory.getLogger("com.kolab");
 
-    public ManejoDeErrores(BitacoraDeSeguridad bitacora) {
+    private final BitacoraDeSeguridad bitacora;
+    // en algunas pruebas no hay registro de metricas: ahi simplemente no se cuenta
+    private final ObjectProvider<MeterRegistry> metricas;
+
+    public ManejoDeErrores(BitacoraDeSeguridad bitacora, ObjectProvider<MeterRegistry> metricas) {
         this.bitacora = bitacora;
+        this.metricas = metricas;
     }
 
     // la persona vuelve a la pantalla desde la que lo intentó y ve por qué no se pudo
@@ -48,6 +64,28 @@ public class ManejoDeErrores {
                 pedido.getRemoteAddr());
         model.addAttribute("status", HttpStatus.NOT_FOUND.value());
         return "error";
+    }
+
+    // lo que nadie esperaba: queda en el log con su traza y en el contador de errores, y la persona solo ve
+    // la pagina generica, sin detalles de adentro
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String inesperado(Exception e, HttpServletRequest pedido, Model model) throws Exception {
+        if (loRespondeSpring(e)) {
+            throw e;
+        }
+        log.error("error inesperado en {}", pedido.getRequestURI(), e);
+        metricas.ifAvailable(registro -> registro.counter("kolab.errores.backend").increment());
+        model.addAttribute("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        return "error";
+    }
+
+    // 404 de una ruta, 405, un parametro mal escrito o falta de permiso: spring ya sabe responderlos y siguen igual
+    private static boolean loRespondeSpring(Exception e) {
+        return e instanceof ErrorResponse || e instanceof TypeMismatchException
+                || e instanceof HttpMessageNotReadableException || e instanceof BindException
+                || e instanceof AccessDeniedException || e instanceof AuthenticationException
+                || AnnotatedElementUtils.hasAnnotation(e.getClass(), ResponseStatus.class);
     }
 
     // solo se vuelve a una ruta de la propia aplicacion, nunca a otro sitio
