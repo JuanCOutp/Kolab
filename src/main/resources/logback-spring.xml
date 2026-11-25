@@ -3,9 +3,13 @@
 
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
+    <!-- un solo formato para la consola y el archivo. %replace cambia cualquier salto de linea del
+         mensaje por _ : asi un dato que viene del usuario no puede inventar una linea nueva en el log -->
+    <property name="PATRON" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %replace(%msg){'[\r\n]', '_'}%n"/>
+
     <appender name="CONSOLA" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <pattern>${PATRON}</pattern>
             <charset>UTF-8</charset>
         </encoder>
     </appender>
@@ -20,7 +24,7 @@
             <totalSizeCap>500MB</totalSizeCap>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
+            <pattern>${PATRON}</pattern>
             <charset>UTF-8</charset>
         </encoder>
     </appender>

@@ -106,6 +106,36 @@ Reporte en HTML, con el total, los fallos, las omitidas y la duración:
 Queda en `target/reports/surefire.html`. GitHub Actions lo arma en cada Pull Request y lo guarda
 como artefacto `reporte-de-pruebas`, en la página de la ejecución.
 
+## Análisis de seguridad del código
+
+SpotBugs con las reglas de seguridad de FindSecBugs revisa el código compilado:
+
+    mvnw.cmd compile spotbugs:check
+
+Lista cada aviso en la consola y termina en `BUILD FAILURE` mientras quede alguno. Para verlos uno por
+uno, con el código al lado:
+
+    mvnw.cmd spotbugs:gui
+
+La primera vez encontró 121 avisos:
+
+- 10 de saltos de línea en el log (`CRLF_INJECTION_LOGS`): un dato con un salto de línea podía
+  escribir una línea falsa en el log. Es el único riesgo real. Se arregló en `logback-spring.xml`, que
+  cambia cualquier salto de línea del mensaje por `_`, y lo cuida `BitacoraSinLineasFalsasTest`.
+- 47 de rutas públicas (`SPRING_ENDPOINT`): solo informan qué rutas atiende cada controlador. Quién
+  puede entrar a cada una lo decide `SecurityConfig` y lo prueba `SeguridadTest`.
+
+Esos dos quedan excluidos en `spotbugs-exclude.xml`, cada uno con su razón. Quedan 64, ninguno de
+seguridad:
+
+- 56 de objetos que se pueden modificar desde afuera (`EI_EXPOSE_REP` y `EI_EXPOSE_REP2`): las
+  entidades y los registros reciben y devuelven listas y fechas sin copiarlas. Es un aviso de diseño;
+  ningún dato de la persona llega a esos objetos sin pasar por los formularios.
+- 8 de estilo: `toLowerCase` sin indicar el idioma, un `SecureRandom` que se crea para usarlo una
+  sola vez (sigue siendo seguro; el aviso es de rendimiento), un
+  posible nulo en `MensajeController`, una excepción en el constructor de `Fotos` y dos de
+  `UsuarioAutenticado` (`equals` y `serialVersionUID`).
+
 ## Stack
 
 Java 21, Spring Boot 3.5, Thymeleaf, Spring Security, Spring Data JPA, PostgreSQL, Flyway y Maven.
