@@ -11,6 +11,11 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" th:href="@{/css/kolab.css}">
+    <!-- el token csrf para los pedidos que arma javascript, como el aviso de errores -->
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}">
+    <!-- va primero y sin defer para atrapar tambien los errores de los otros scripts -->
+    <script th:src="@{/js/errores.js}"></script>
 </head>
 <body>
 
