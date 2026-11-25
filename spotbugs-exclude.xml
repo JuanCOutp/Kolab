@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter
+        xmlns="https://github.com/spotbugs/filter/3.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/3.1.0/spotbugs/etc/findbugsfilter.xsd">
+
+    <!-- revisado: saltos de linea en el log. esta arreglado en logback-spring.xml, que cambia cualquier
+         salto de linea del mensaje por _ en todos los logs, y lo cuida BitacoraSinLineasFalsasTest.
+         spotbugs no lee el xml de logback, por eso lo sigue marcando en el codigo java -->
+    <Match>
+        <Bug pattern="CRLF_INJECTION_LOGS"/>
+    </Match>
+
+    <!-- revisado: solo informativo, lista cada ruta que atiende un controlador para que alguien la revise.
+         quien puede entrar a cada ruta lo decide SecurityConfig y lo prueba SeguridadTest -->
+    <Match>
+        <Bug pattern="SPRING_ENDPOINT"/>
+    </Match>
+
+</FindBugsFilter>

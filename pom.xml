@@ -143,6 +143,8 @@
                     <effort>Max</effort>
                     <threshold>Low</threshold>
                     <xmlOutput>true</xmlOutput>
+                    <!-- avisos ya revisados, cada uno con su razon adentro del archivo -->
+                    <excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
                     <plugins>
                         <plugin>
                             <groupId>com.h3xstream.findsecbugs</groupId>
