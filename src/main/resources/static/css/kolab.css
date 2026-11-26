@@ -321,6 +321,7 @@ main.k-formulario {
 input[type="text"],
 input[type="email"],
 input[type="password"],
+input[type="search"],
 input[type="date"],
 input[type="number"],
 select,
@@ -3267,3 +3268,100 @@ body:has(.k-msj) .k-pie {
 .k-cara-29 { --lado: 2.9rem; }
 .k-cara-32 { --lado: 3.2rem; }
 .k-cara-5 { --lado: 5rem; }
+
+/* historial del panel: el log en una tabla, con filtro por nivel */
+
+.k-historial-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+a.k-chip {
+    color: var(--tinta-2);
+    text-decoration: none;
+}
+
+a.k-chip.activo {
+    color: var(--panel);
+    background: var(--acento);
+    border-color: var(--acento);
+}
+
+.k-historial-buscar {
+    display: flex;
+    gap: 0.5rem;
+    flex: 1 1 18rem;
+    max-width: 28rem;
+}
+
+.k-historial th:not(:first-child),
+.k-historial td:not(:first-child) {
+    text-align: left;
+}
+
+.k-historial td {
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+.k-historial td.k-historial-mensaje {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.k-historial-pie {
+    margin: 0.8rem 0 0;
+    font-size: 0.85rem;
+}
+
+.k-nivel {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 0.1rem 0.6rem;
+    color: var(--tinta-2);
+    background: var(--hueso);
+}
+
+.k-nivel-error {
+    color: var(--rojo);
+    background: var(--rojo-fondo);
+}
+
+.k-nivel-info {
+    color: var(--verde);
+    background: var(--verde-suave);
+}
+
+/* boton para ver la contraseña, lo agrega ver-clave.js */
+
+.k-clave-caja {
+    position: relative;
+    display: block;
+}
+
+.k-clave-caja input {
+    padding-right: 2.6rem;
+}
+
+.k-ver-clave {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 2.6rem;
+    width: 2.6rem;
+    border: 0;
+    background: none;
+    color: var(--tinta-3);
+    cursor: pointer;
+}
+
+.k-ver-clave:hover,
+.k-ver-clave:focus-visible {
+    color: var(--tinta);
+}

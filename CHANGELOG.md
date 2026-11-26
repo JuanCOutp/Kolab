@@ -6,6 +6,18 @@ Todo lo que cambia en KOLAB se anota aquí. El formato sigue
 
 ## [Sin publicar]
 
+### Agregado
+
+- Pantalla Historial en el panel del administrador: muestra el log de la aplicación (`logs/kolab.json`)
+  en una tabla con la hora de Lima, el nivel, de qué parte viene y qué pasó. Se filtra por nivel y
+  se busca por texto.
+- El log anota quién publica, cancela, oferta, acepta, cierra y califica, con el número de su cuenta.
+- Botón para ver la contraseña mientras se escribe, en el ingreso, el registro y el cambio de clave.
+
+### Corregido
+
+- La hora de lectura de Monitoreo sale en hora de Lima. En el servidor de Azure salía en UTC.
+
 ## [0.3.2]
 
 ### Cambiado

@@ -84,6 +84,7 @@
             <li><a th:href="@{/admin}" th:classappend="${seccion == 'panel'} ? 'activo'">Panel</a></li>
             <li><a th:href="@{/admin/cuentas}" th:classappend="${seccion == 'cuentas'} ? 'activo'">Cuentas</a></li>
             <li><a th:href="@{/admin/monitoreo}" th:classappend="${seccion == 'monitoreo'} ? 'activo'">Monitoreo</a></li>
+            <li><a th:href="@{/admin/historial}" th:classappend="${seccion == 'historial'} ? 'activo'">Historial</a></li>
         </ul>
 
         <form class="k-panel-salir" th:action="@{/admin/salir}" method="post" sec:authorize="hasRole('ADMINISTRADOR')">

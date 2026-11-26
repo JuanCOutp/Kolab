@@ -68,7 +68,9 @@ public class OfertaServiceImpl implements OfertaService {
         }
         String mensaje = form.getMensaje() == null || form.getMensaje().isBlank() ? null : form.getMensaje().trim();
         Oferta nueva = new Oferta(s, usuarioRepository.getReferenceById(idUsuario), form.getMonto(), mensaje);
-        return ofertaRepository.save(nueva).getId();
+        Long id = ofertaRepository.save(nueva).getId();
+        log.info("oferta {} enviada a la solicitud {} por la cuenta {}", id, idSolicitud, idUsuario);
+        return id;
     }
 
     @Override
@@ -89,7 +91,7 @@ public class OfertaServiceImpl implements OfertaService {
         ofertaRepository.findBySolicitudIdOrderByMontoPropuesto(elegida.getSolicitud().getId()).stream()
                 .filter(o -> !o.getId().equals(idOferta) && o.getEstado() == EstadoOferta.ENVIADA)
                 .forEach(Oferta::rechazar);
-        log.info("oferta {} aceptada, servicio {} creado", idOferta, servicio.getId());
+        log.info("oferta {} aceptada por la cuenta {}, servicio {} creado", idOferta, idAutor, servicio.getId());
         return servicio.getId();
     }
 

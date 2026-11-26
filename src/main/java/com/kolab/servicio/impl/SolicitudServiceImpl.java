@@ -14,6 +14,8 @@ import com.kolab.servicio.SolicitudService;
 import com.kolab.servicio.excepcion.OperacionNoPermitidaException;
 import com.kolab.servicio.excepcion.RecursoNoEncontradoException;
 import com.kolab.util.FotosSubidas;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SolicitudServiceImpl implements SolicitudService {
+
+    private static final Logger log = LoggerFactory.getLogger(SolicitudServiceImpl.class);
 
     private final SolicitudRepository solicitudRepository;
     private final CategoriaRepository categoriaRepository;
@@ -60,7 +64,9 @@ public class SolicitudServiceImpl implements SolicitudService {
             }
             nueva.setDestinatario(destinatario);
         }
-        return solicitudRepository.save(nueva).getId();
+        Long id = solicitudRepository.save(nueva).getId();
+        log.info("solicitud {} publicada por la cuenta {}", id, idAutor);
+        return id;
     }
 
     @Override
@@ -118,6 +124,7 @@ public class SolicitudServiceImpl implements SolicitudService {
     @Transactional
     public void cancelar(Long idSolicitud, Long idAutor) {
         editable(idSolicitud, idAutor).cancelar();
+        log.info("solicitud {} cancelada por la cuenta {}", idSolicitud, idAutor);
     }
 
     @Override
