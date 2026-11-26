@@ -11,7 +11,8 @@ import io.micrometer.core.instrument.TimeGauge;
 import io.micrometer.core.instrument.Timer;
 import java.io.File;
 import java.lang.management.ManagementFactory;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class MonitoreoServiceImpl implements MonitoreoService {
 
-    private static final DateTimeFormatter HORA = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+    // el servidor de azure esta en utc, la pantalla muestra la hora de lima
+    private static final DateTimeFormatter HORA = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
+            .withZone(ZoneId.of("America/Lima"));
     private static final long MB = 1024L * 1024;
     private static final long GB = MB * 1024;
 
@@ -37,7 +40,7 @@ public class MonitoreoServiceImpl implements MonitoreoService {
 
     @Override
     public Monitoreo leer() {
-        return new Monitoreo(LocalDateTime.now().format(HORA), aplicacion(), baseDeDatos(), sistema());
+        return new Monitoreo(HORA.format(Instant.now()), aplicacion(), baseDeDatos(), sistema());
     }
 
     // apm: lo que micrometer va contando de cada peticion, mas los dos contadores de errores propios
