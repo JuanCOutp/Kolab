@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: base(~{::title}, ~{::main})}">
+<head>
+    <title>Historial · KOLAB</title>
+</head>
+<body>
+
+<main class="k-total" th:with="h=${historial}">
+    <div class="k-titulo-fila k-panel-cima">
+        <h1>Historial</h1>
+        <a class="k-btn" th:href="@{/admin/historial(nivel=${nivel}, buscar=${buscar})}"><i class="bi bi-arrow-clockwise"></i> Actualizar</a>
+    </div>
+    <p class="k-texto-suave">Lo que va anotando KOLAB en su log: ingresos, publicaciones, ofertas, cierres y errores. Hora de Lima.</p>
+
+    <div class="k-historial-filtros">
+        <nav class="k-chips" aria-label="Filtrar por nivel">
+            <a class="k-chip" th:classappend="${nivel == null} ? 'activo'" th:href="@{/admin/historial(buscar=${buscar})}">Todos</a>
+            <a class="k-chip" id="filtro-error" th:classappend="${nivel == 'ERROR'} ? 'activo'" th:href="@{/admin/historial(nivel='ERROR', buscar=${buscar})}">Errores · <span th:text="${h.errores}">0</span></a>
+            <a class="k-chip" th:classappend="${nivel == 'WARN'} ? 'activo'" th:href="@{/admin/historial(nivel='WARN', buscar=${buscar})}">Avisos · <span th:text="${h.avisos}">3</span></a>
+            <a class="k-chip" th:classappend="${nivel == 'INFO'} ? 'activo'" th:href="@{/admin/historial(nivel='INFO', buscar=${buscar})}">Información · <span th:text="${h.informativos}">40</span></a>
+        </nav>
+        <form class="k-historial-buscar" th:action="@{/admin/historial}" method="get">
+            <input type="hidden" name="nivel" th:value="${nivel}">
+            <input type="search" name="buscar" th:value="${buscar}" placeholder="Buscar: ingreso, oferta, una cuenta" aria-label="Buscar en el historial">
+            <button type="submit" class="k-btn k-btn-linea">Buscar</button>
+        </form>
+    </div>
+
+    <section class="k-tarjeta">
+        <p class="k-texto-suave" th:if="${h.lineas.isEmpty()}">No hay líneas que mostrar.</p>
+        <table class="k-tabla k-historial" th:unless="${h.lineas.isEmpty()}">
+            <thead>
+            <tr><th>Hora</th><th>Nivel</th><th>Dónde</th><th>Qué pasó</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="l : ${h.lineas}">
+                <td th:text="${l.hora}">26/11 21:40:02</td>
+                <td><span class="k-nivel" th:classappend="'k-nivel-' + ${#strings.toLowerCase(l.nivel)}"
+                          th:text="${l.nivel == 'ERROR'} ? 'Error' : (${l.nivel == 'WARN'} ? 'Aviso' : 'Info')">Info</span></td>
+                <td th:text="${l.origen}">OfertaServiceImpl</td>
+                <td class="k-historial-mensaje" th:text="${l.mensaje}">oferta 12 aceptada, servicio 5 creado</td>
+            </tr>
+            </tbody>
+        </table>
+        <p class="k-texto-suave k-historial-pie" th:unless="${h.lineas.isEmpty()}">Se muestran las últimas 200 líneas que cumplen el filtro.</p>
+    </section>
+</main>
+
+</body>
+</html>

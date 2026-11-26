@@ -151,7 +151,7 @@ El código está ordenado por capas. Las carpetas de Java están en `src/main/ja
 | `servicio/` | Las interfaces de lo que hace la aplicación | `SolicitudService` |
 | `servicio/impl/` | Las implementaciones de esas interfaces y las piezas que arman sus resultados | `SolicitudServiceImpl` |
 | `servicio/excepcion/` | Los errores del negocio que lanzan los servicios | `RecursoNoEncontradoException` |
-| `dao/` | El acceso a la base: repositorios de Spring Data JPA | `SolicitudRepository` |
+| `dao/` | El acceso a los datos: repositorios de Spring Data JPA y lo que no es de una tabla, como el estado de la base y el archivo de log | `SolicitudRepository`, `ArchivoDeLog` |
 | `modelo/entidad/` | Las tablas como clases JPA y sus estados | `Solicitud` |
 | `modelo/dto/` | Formularios y datos que llegan a las vistas | `SolicitudForm` |
 | `seguridad/` | Ingreso, permisos, bloqueo por intentos, sesión suspendida y bitácora | `SecurityConfig` |
