@@ -1,0 +1,32 @@
+# Trae solo los cambios de paolo2711/Kolab (rama develop) cada 30 minutos.
+# Si hubo cambios, vuelve a publicar KOLAB en Azure (kolab-juan).
+name: Sincronizar con Paolo
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  sincronizar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Traer cambios del repo de Paolo
+        id: sync
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          antes=$(gh api repos/${{ github.repository }}/commits/develop --jq .sha)
+          gh api -X POST repos/${{ github.repository }}/merge-upstream -f branch=develop
+          despues=$(gh api repos/${{ github.repository }}/commits/develop --jq .sha)
+          if [ "$antes" != "$despues" ]; then echo "cambio=si" >> "$GITHUB_OUTPUT"; else echo "cambio=no" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Publicar en Azure si hubo cambios
+        if: steps.sync.outputs.cambio == 'si'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run develop_kolab-juan.yml --ref develop -R ${{ github.repository }}
